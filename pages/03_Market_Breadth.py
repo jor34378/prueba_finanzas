@@ -1,23 +1,4 @@
 import streamlit as st
-import subprocess
-import sys
-import importlib.util
-
-# --- 1. HACK DE INSTALACIÓN DINÁMICA (TIENE QUE IR PRIMERO) ---
-def install_and_import(package):
-    # Verificamos si pandas_ta existe en el sistema
-    if importlib.util.find_spec(package.replace("-", "_")) is None:
-        with st.spinner(f"Instalando {package}... esto solo ocurre una vez."):
-            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-    return importlib.import_module(package.replace("-", "_"))
-
-# Instalamos/Importamos antes de cualquier otro proceso
-try:
-    ta = install_and_import("pandas-ta")
-except Exception as e:
-    st.error(f"Error crítico de instalación: {e}")
-
-# --- 2. RESTO DE IMPORTS (SOLO DESPUÉS DE LA INSTALACIÓN) ---
 import yfinance as yf
 import pandas as pd
 import io
@@ -25,13 +6,13 @@ import requests
 import re
 import matplotlib.pyplot as plt
 
-# --- 3. CONFIGURACIÓN Y UI ---
+# --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Market Breadth 500", layout="wide")
 
 st.title("🧬 Módulo 3: Market Breadth & Global Regime")
-st.markdown("Análisis de salud interna del S&P 500 y confluencia de activos de riesgo.")
+st.markdown("Análisis de salud interna del S&P 500 sin dependencias externas.")
 
-# --- 4. FUNCIÓN DE CARGA DE DATOS ---
+# --- FUNCIÓN DE CARGA DE DATOS ---
 @st.cache_data(ttl=3600)
 def get_breadth_data():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -41,7 +22,8 @@ def get_breadth_data():
     
     global_assets = ["SPY", "^VIX", "HYG", "TLT"]
     
-    with st.spinner("Descargando datos del S&P 500..."):
+    with st.spinner("Descargando datos del S&P 500 (esto toma 20 seg)..."):
+        # Descargamos los últimos 2 años para tener datos del SMA200
         data_raw = yf.download(all_tickers + global_assets, period="2y", interval="1d", auto_adjust=True, progress=False)
         data = data_raw['Close'] if 'Close' in data_raw.columns else data_raw
         if isinstance(data.columns, pd.MultiIndex):
@@ -56,18 +38,22 @@ try:
     hyg = data['HYG'].dropna()
     tlt = data['TLT'].dropna()
     
-    with st.spinner("Calculando Amplitud de Mercado (Breadth)..."):
-        # Calculamos SMA200 para los 500 activos
-        all_sma200 = data[all_tickers].apply(lambda x: ta.sma(x, length=200))
-        # % de acciones arriba de su media
+    with st.spinner("Calculando Amplitud de Mercado..."):
+        # --- CÁLCULO MANUAL (Sin pandas-ta) ---
+        # Calculamos la media de 200 días para todas las acciones
+        all_sma200 = data[all_tickers].rolling(window=200).mean()
+        
+        # Breadth: % de acciones cuyo precio actual es mayor a su media de 200
+        # Usamos .iloc[-500:] para asegurarnos de comparar los días finales
         breadth = (data[all_tickers] > all_sma200).sum(axis=1) / len(all_tickers) * 100
         
-        sma200_spy = ta.sma(spy, length=200)
+        # SMA200 del SPY y métricas derivadas
+        sma200_spy = spy.rolling(window=200).mean()
         dist_pct = ((spy / sma200_spy) - 1) * 100
         b_slope = breadth.diff(5)
         sma_slope = (sma200_spy.diff(5) / sma200_spy.shift(5)) * 100
 
-    # --- MÉTRICAS ---
+    # --- UI: MÉTRICAS PRINCIPALES ---
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Breadth (Acciones > SMA200)", f"{breadth.iloc[-1]:.1f}%", f"{b_slope.iloc[-1]:+.1f}")
     m2.metric("VIX (Miedo)", f"{vix.iloc[-1]:.2f}", delta=f"{vix.diff(1).iloc[-1]:+.2f}", delta_color="inverse")
@@ -76,7 +62,7 @@ try:
 
     st.divider()
 
-    # --- TABLA ---
+    # --- UI: TABLA HISTÓRICA ---
     st.subheader("📋 Matriz Histórica de Confluencias")
     periods = {'Actual': -1, '7 Días': -7, '30 Días': -30, '90 Días': -90}
     history = []
@@ -95,7 +81,7 @@ try:
     }).background_gradient(cmap='RdYlGn', subset=['Breadth %', 'HYG (Crédito)'])
       .background_gradient(cmap='RdYlGn_r', subset=['VIX']), use_container_width=True)
 
-    # --- DIAGNÓSTICO ---
+    # --- UI: DIAGNÓSTICO FINAL ---
     st.divider()
     actual = df_report.iloc[0]
     
@@ -108,7 +94,7 @@ try:
     else:
         st.info("🎯 **DIAGNÓSTICO: NEUTRAL** - El mercado busca dirección clara.")
 
-    # --- GRÁFICO ---
+    # --- GRÁFICO DE BREADTH ---
     st.subheader("📈 Gráfico de Participación Total")
     fig, ax = plt.subplots(figsize=(10, 3))
     ax.fill_between(breadth.index, breadth, 50, color='lime' if breadth.iloc[-1] > 50 else 'red', alpha=0.2)
