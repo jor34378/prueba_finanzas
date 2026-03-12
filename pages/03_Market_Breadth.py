@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Market Breadth 500", layout="wide")
 
-# --- FUNCIÓN RSI MANUAL (Para no depender de pandas-ta) ---
+# --- FUNCIÓN RSI MANUAL ---
 def calculate_rsi(series, period=14):
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
@@ -55,7 +55,7 @@ try:
 
     st.title("🧬 Módulo 3: Market Breadth & Global Regime")
     
-    # --- MÉTRICAS ---
+    # --- 1. MÉTRICAS PRINCIPALES (Flechitas) ---
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Breadth (> SMA200)", f"{breadth.iloc[-1]:.1f}%", f"{b_slope.iloc[-1]:+.1f}")
     m2.metric("RSI SPY (14d)", f"{rsi_spy.iloc[-1]:.1f}")
@@ -64,7 +64,7 @@ try:
 
     st.divider()
 
-    # --- GRÁFICOS NUEVOS ---
+    # --- 2. GRÁFICOS TÉCNICOS (RSI y Extensión) ---
     col_g1, col_g2 = st.columns(2)
 
     with col_g1:
@@ -90,7 +90,38 @@ try:
         fig_ext.patch.set_facecolor('#0e1117')
         st.pyplot(fig_ext)
 
-    # --- LA GUÍA TÉCNICA QUE PEDISTE ---
+    # --- 3. TABLA HISTÓRICA (MATRIZ) ---
+    st.subheader("📋 Matriz Histórica de Confluencias")
+    periods = {'Actual': -1, '7 Días': -7, '30 Días': -30, '90 Días': -90}
+    history = []
+    for label, idx in periods.items():
+        history.append({
+            'Periodo': label, 'SPY Price': spy.iloc[idx], 'Ext %': dist_pct.iloc[idx],
+            'VIX': vix.iloc[idx], 'HYG (Crédito)': hyg.iloc[idx], 'TLT (Bonos)': tlt.iloc[idx],
+            'Breadth %': breadth.iloc[idx], 'B-Slope': b_slope.iloc[idx]
+        })
+    df_report = pd.DataFrame(history)
+    
+    st.dataframe(df_report.style.format({
+        'SPY Price': '{:.2f}', 'Ext %': '{:+.2f}%', 'VIX': '{:.2f}',
+        'HYG (Crédito)': '{:.2f}', 'TLT (Bonos)': '{:.2f}',
+        'Breadth %': '{:.1f}%', 'B-Slope': '{:+.1f}'
+    }).background_gradient(cmap='RdYlGn', subset=['Breadth %', 'HYG (Crédito)'])
+      .background_gradient(cmap='RdYlGn_r', subset=['VIX']), use_container_width=True)
+
+    # --- 4. GRÁFICO DE BREADTH (EL ORIGINAL) ---
+    st.subheader("📊 Participación Total (Acciones > SMA200)")
+    fig_b, ax_b = plt.subplots(figsize=(10, 3))
+    ax_b.fill_between(breadth.index, breadth, 50, color='lime' if breadth.iloc[-1] > 50 else 'red', alpha=0.2)
+    ax_b.plot(breadth.index, breadth, color='white', lw=1)
+    ax_b.axhline(60, color='green', ls='--', alpha=0.5)
+    ax_b.axhline(40, color='red', ls='--', alpha=0.5)
+    ax_b.set_facecolor('#0e1117')
+    fig_b.patch.set_facecolor('#0e1117')
+    st.pyplot(fig_b)
+
+    # --- 5. TEXTO DE GUÍA TÉCNICA ---
+    st.divider()
     st.markdown("""
     # 📉 GUÍA TÉCNICA: DINÁMICA DE VARIABLES Y CONFLUENCIAS
     ---
@@ -127,6 +158,11 @@ try:
     * **Interpretación:** El crédito y los bonos confirman daño en la economía real. Rebotes falsos.
     * **Acción:** **Cash es Rey.** Buscar shorts o quedarse fuera.
 
+    ### 🔵 **ESCENARIO: Suelo de Capitulación (El Gran Rebote)**
+    * **Variables:** Breadth < 15% + VIX > 30 + B-Slope girando a verde (+).
+    * **Interpretación:** Ya no quedan vendedores. El pánico ha limpiado el mercado.
+    * **Acción:** **Cargar posiciones.** Punto de máximo beneficio potencial.
+    
     ---
     ## 📊 3. MATRIZ DE TOMA DE DECISIÓN TÁCTICA
     """)
@@ -141,7 +177,7 @@ try:
     ---
     ## 🎓 4. CONSEJOS DE NIVEL "ADVANCED JUNIOR"
     * **⚠️ Prioridad de Variables:** Si el **VIX** y el **HYG** muestran peligro, ignora cualquier vela alcista en el precio. La liquidez siempre manda sobre el gráfico.
-    * **🔍 El Filtro de los 90 días:** Si el **Breadth** actual es menor al de hace 90 días pero el **SPY** está en un precio mayor, estás en una **Divergencia Terminal**.
+    * **🔍 El Filtro de los 90 días:** Si el **Breadth** actual es menor al de hace 90 días pero el **SPY** está en un precio mayor, estás en una **Divergencia Terminal**. El agotamiento es total.
     """)
 
 except Exception as e:
