@@ -4,10 +4,10 @@ pandas
 numpy
 matplotlib
 seaborn
-pandas-ta
 requests
 lxml
 html5lib
 streamlit-autorefresh
+
 
 
