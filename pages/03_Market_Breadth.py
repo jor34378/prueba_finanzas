@@ -26,7 +26,7 @@ def calculate_rsi(series, period=14):
     return 100 - (100 / (1 + rs))
 
 # --- CARGA DE DATOS ---
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=900)
 def get_breadth_data():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
