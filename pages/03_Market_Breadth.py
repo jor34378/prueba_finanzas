@@ -7,16 +7,33 @@ import requests
 import re
 import matplotlib.pyplot as plt
 
-import os
+import streamlit as st
 import subprocess
 import sys
+import importlib.util
 
-# Instalación "on-the-fly" si no existe
+# --- HACK DE INSTALACIÓN DINÁMICA PRO ---
+def install_and_import(package):
+    if importlib.util.find_spec(package.replace("-", "_")) is None:
+        with st.spinner(f"Instalando {package} en el servidor..."):
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+    return importlib.import_module(package.replace("-", "_"))
+
 try:
+    ta = install_and_import("pandas-ta")
+except Exception as e:
+    st.error(f"Error instalando pandas-ta: {e}")
+    st.info("Intentando método alternativo...")
+    # Si falla, usamos el import directo por si ya se instaló
     import pandas_ta as ta
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pandas-ta"])
-    import pandas_ta as ta
+# ---------------------------------------
+
+import yfinance as yf
+import pandas as pd
+import io
+import requests
+import re
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Market Breadth 500", layout="wide")
 
