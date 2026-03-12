@@ -94,3 +94,52 @@ def color_estado(val):
     return f'background-color: {color_map.get(val, "")}'
 
 st.dataframe(trend_table.style.applymap(color_estado, subset=['ESTADO']).format("{:.2f}%", subset=['RS vs 7D (%)', 'RS vs 30D (%)', 'RS vs 90D (%)']), use_container_width=True)
+
+
+# --- AGREGAR AL FINAL DEL ARCHIVO 02_DASHBOARD.PY ---
+st.divider()
+
+with st.expander("📖 Ver Guía de Acción Táctica (RSI + Extensión + Medias)"):
+    st.markdown("""
+    ### 🛠️ Estrategia de Ejecución Basada en Niveles Técnicos
+
+    Esta guía combina el **RSI**, la **Extensión de la SMA200** y el **Precio** para determinar puntos de entrada y salida con alta probabilidad.
+
+    ---
+
+    ### 🟢 1. REGLAS DE ENTRADA (Buy the Dip / Momentum)
+
+    | Señal | RSI (14D) | Extensión % | Acción Sugerida |
+    | :--- | :--- | :--- | :--- |
+    | **Oversold Extremo** | **< 30** | **< 0% (Cerca de SMA200)** | **COMPRA AGRESIVA:** Probable suelo temporal. |
+    | **Rebote de Momentum** | **Cruce > 50** | **0% a +5%** | **CONFIRMACIÓN:** El precio recupera fuerza tras descanso. |
+    | **Ignición** | **Cruce > 70** | **+2% a +6%** | **COMPRA MOMENTUM:** No es sobrecompra aún, es fuerza pura. |
+
+    ---
+
+    ### 🔴 2. REGLAS DE SALIDA (Take Profit / Stop Loss)
+
+    | Señal | RSI (14D) | Extensión % | Acción Sugerida |
+    | :--- | :--- | :--- | :--- |
+    | **Euforia Terminal** | **> 80** | **> +8%** | **VENTA TOTAL:** Riesgo inminente de regresión a la media. |
+    | **Divergencia Bajista**| **Bajando** | **Subiendo** | **REDUCIR EXPOSICIÓN:** El precio sube sin fuerza real. |
+    | **Falla de Soporte** | **< 50** | **Cruce < 0%** | **STOP LOSS:** El activo perdió su tendencia de largo plazo. |
+
+    ---
+
+    ### 🧠 Conceptos "Advanced Junior" para el Dashboard
+
+    * **La Regla del 8%:** Históricamente, el SPY rara vez se mantiene por encima del 8-10% de su SMA200 por mucho tiempo. Es un "imán" que tarde o temprano succiona el precio hacia abajo.
+    * **RSI 50 como Eje:** Mientras el RSI se mantenga arriba de 50, estamos en **Modo Alcista**. Si el RSI choca contra 50 desde abajo y no lo pasa, el rebote falló.
+    * **Confluencia VIX:** Si el **Módulo 3** muestra un VIX subiendo y aquí ves una **Extensión > 8%**, la probabilidad de un crash de corto plazo es del 90%.
+
+    ---
+    *Utiliza esta matriz para eliminar la emoción del trading y operar basado en datos estadísticos.*
+    """)
+
+
+
+
+
+
+
