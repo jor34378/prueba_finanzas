@@ -1,10 +1,12 @@
 streamlit
 yfinance
-pandas==2.2.2
-numpy==1.26.4
+pandas
+numpy
 matplotlib
 seaborn
-pandas-ta==0.3.14b0
+pandas-ta
 requests
 lxml
 html5lib
+streamlit-autorefresh
+
