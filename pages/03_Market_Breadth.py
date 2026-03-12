@@ -7,6 +7,17 @@ import requests
 import re
 import matplotlib.pyplot as plt
 
+import os
+import subprocess
+import sys
+
+# Instalación "on-the-fly" si no existe
+try:
+    import pandas_ta as ta
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pandas-ta"])
+    import pandas_ta as ta
+
 st.set_page_config(page_title="Market Breadth 500", layout="wide")
 
 st.title("🧬 Módulo 3: Market Breadth & Global Regime")
