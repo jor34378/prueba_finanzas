@@ -6,6 +6,14 @@ import requests
 import re
 import matplotlib.pyplot as plt
 
+# --- AGREGÁ ESTO AQUÍ ---
+from streamlit_autorefresh import st_autorefresh
+
+# Refresco automático cada 15 minutos
+# (15 min * 60 seg * 1000 ms = 900.000)
+st_autorefresh(interval=900000, key="breadth_refresh")
+# ------------------------
+
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Market Breadth 500", layout="wide")
 
