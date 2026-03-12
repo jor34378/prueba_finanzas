@@ -5,12 +5,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+import streamlit as st
+import yfinance as yf
+# ... otros imports ...
+
+# --- AGREGÁ ESTO AQUÍ ---
+from streamlit_autorefresh import st_autorefresh
+
+# Refresco automático cada 15 minutos
+# (15 min * 60 seg * 1000 ms = 900.000)
+st_autorefresh(interval=900000, key="rotacion_refresh")
+# ------------------------
+
 st.set_page_config(page_title="Radar de Rotación Pro", layout="wide")
 
 st.title("🚀 Radar de Aceleración y Rotación Sectorial")
 st.markdown("Comparativa de Tasas Anualizadas de Fuerza Relativa vs SPY")
 
-@st.cache_data
+@st.cache_data (ttl=900)
 def get_data(p):
     sectors = {
         "XLK": "Tech", "XLE": "Energy", "XLF": "Financials",
