@@ -3,6 +3,8 @@ yfinance
 pandas
 matplotlib
 numpy
-
 seaborn
-pandas-ta
+pandas-ta==0.3.14b0
+requests
+lxml
+html5lib
