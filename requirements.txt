@@ -1,8 +1,8 @@
 streamlit
 yfinance
-pandas
+pandas==2.2.2
+numpy==1.26.4
 matplotlib
-numpy
 seaborn
 pandas-ta==0.3.14b0
 requests
