@@ -4,12 +4,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# --- AGREGÁ ESTO AQUÍ ---
+from streamlit_autorefresh import st_autorefresh
+
+# Refresco automático cada 15 minutos
+# (15 min * 60 seg * 1000 ms = 900.000)
+st_autorefresh(interval=900000, key="Dashboard_refresh")
+# ------------------------
+
 st.set_page_config(page_title="Dashboard Técnico de Sectores", layout="wide")
 
 st.title("📊 Módulo 2: Análisis de Tendencia y RS Normalizado")
 
 # --- REUTILIZAMOS TU LÓGICA DE DATOS ---
-@st.cache_data
+@st.cache_data(ttl=900)
 def get_data():
     sectors = {
         "XLK": "Technology", "XLE": "Energy", "XLF": "Financials",
