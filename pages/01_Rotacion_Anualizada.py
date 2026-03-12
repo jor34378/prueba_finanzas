@@ -115,3 +115,69 @@ try:
 
 except Exception as e:
     st.error(f"Hubo un problema al procesar los datos: {e}")
+
+# --- AGREGAR AL FINAL DEL ARCHIVO ---
+st.divider()
+st.markdown("""
+# 🚩 Cheat Sheet: Interpretación del Radar de Aceleración (Tasas Anualizadas)
+
+Esta guía explica cómo leer las barras de momentum anualizado y la pendiente (Slope) para detectar giros institucionales antes de que sean evidentes en el precio.
+
+---
+
+### 1. Los 4 Escenarios de Aceleración (The Slope Analysis)
+
+La **Pendiente (Slope)** es la derivada del flujo de capital. No mires solo el color de la barra, mira la dirección de la línea punteada.
+
+#### 🚀 ESCENARIO A: ACELERACIÓN POSITIVA (Slope > 0)
+* **Visual:** Las barras suben de izquierda a derecha (7D es la más alta).
+* **Interpretación:** El interés institucional está aumentando exponencialmente.
+* **Decisión:** * Si las barras están sobre 0: **COMPRA FUERTE** (Continuación de tendencia).
+    * Si las barras vienen de abajo de 0: **IGNICIÓN** (Giro en V / Cambio de régimen).
+
+#### ⚠️ ESCENARIO B: DESACELERACIÓN (Slope < 0)
+* **Visual:** Las barras bajan de izquierda a derecha (7D es la más baja).
+* **Interpretación:** El sector está perdiendo "gasolina". Sigue subiendo, pero a menor ritmo.
+* **Decisión:** **CAUTELA.** Subir Stop Loss. No entrar aquí aunque el sector parezca el líder, porque el dinero está empezando a rotar hacia afuera.
+
+#### 🛡️ ESCENARIO C: VELOCIDAD CRUCERO (Slope ≈ 0)
+* **Visual:** Las tres barras (90, 30, 7) tienen una altura similar.
+* **Interpretación:** Flujo institucional estable y sano.
+* **Decisión:** **MANTENER.** Es una tendencia madura y predecible.
+
+#### 💀 ESCENARIO D: CAPITULACIÓN (Barras Negativas + Slope < 0)
+* **Visual:** Todas las barras están bajo cero y la de 7D es la más profunda.
+* **Interpretación:** Venta de pánico o abandono total del sector.
+* **Decisión:** **EVITAR.** No intentes "adivinar el piso" aquí hasta que la pendiente cambie de dirección.
+
+---
+
+### 2. Matriz de Combinaciones de Datos
+
+| 90D Anual | 7D Anual | Pendiente | Estado del Sector | Acción Sugerida |
+| :--- | :--- | :--- | :--- | :--- |
+| **Negativo** | **Positivo** | **▲ Alto** | **GIRO DE MANUAL** | **ENTRADA:** Compra especulativa de alta rentabilidad. |
+| **Positivo** | **Positivo** | **▲ Medio** | **LIDERAZGO FUERTE** | **AGREGAR:** El sector tiene el control del mercado. |
+| **Positivo** | **Positivo** | **▼ Bajo** | **AGOTAMIENTO** | **TAKE PROFIT:** El rally está maduro, riesgo de corrección. |
+| **Positivo** | **Negativo** | **▼ Alto** | **ROTACIÓN FUERA** | **SALIR:** El capital está abandonando el sector masivamente. |
+| **Negativo** | **Negativo** | **▲ Medio** | **SUELO FORMÁNDOSE** | **WATCHLIST:** La presión de venta baja, pero no hay compra aún. |
+
+---
+
+### 3. Conceptos Pro para tu Nivel (7.5/10)
+
+* **El "Zarpazo" de 7D:** Una tasa de 7D que supera el +100% anualizado es una señal de que hay una noticia o evento fundamental que cambió la percepción del sector.
+* **Divergencia de Pendiente:** Si el SPY sube pero el sector tiene Slope Negativa, el sector te va a hacer perder dinero aunque el mercado esté alcista.
+* **Normalización:** Recuerda que al estar anualizado, una barra de 7D de +50% es "menos potente" que una de 90D de +50%. La pendiente compensa esto dándote la dirección del vector.
+
+---
+*Analiza la **Aceleración** para encontrar el próximo sector líder antes de que salga en las noticias.*
+""")
+
+
+
+
+
+
+
+
